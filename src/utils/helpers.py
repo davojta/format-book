@@ -19,14 +19,6 @@ def init_openai_client():
         client = OpenAI(api_key=API_KEY)
 
 
-formatted_directory = (
-    "/home/dzianis/projects/study/nlp_tools/format-book/_temp/formatted_chapters_mini/"
-)
-
-if not os.path.exists(formatted_directory):
-    os.makedirs(formatted_directory)
-
-
 def get_stat_for_text(text):
     num_characters = len(text)
     num_words = len(text.split())
