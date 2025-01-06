@@ -26,7 +26,7 @@ poetry install
 
 ## next
 
-- [ ] add github actions 
+- [ ] add github actions
 
 - [ ] compare by sentence (to see the difference between chapters?)
 - [ ] combile chapters by words (2000) into 1 file
