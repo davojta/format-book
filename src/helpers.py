@@ -9,7 +9,7 @@ import re
 API_KEY = "sk-proj-"
 client = OpenAI(api_key=API_KEY)
 
-formatted_directory = "/Users/dzianissheka/projects/dev/study/nlp_tools/format-book/_temp/formatted_chapters_mini/"
+formatted_directory = "/home/dzianis/projects/study/nlp_tools/format-book/_temp/formatted_chapters_mini/"
 
 if not os.path.exists(formatted_directory):
     os.makedirs(formatted_directory)

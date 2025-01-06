@@ -5,6 +5,10 @@ description = "Project to format the book with chatgpt"
 authors = ["Dzianis Sheka <dzianis.sheka@gmail.com>"]
 readme = "README.md"
 
+packages = [
+  { include = "format_book", from = "src" }
+]
+
 [tool.poetry.dependencies]
 python = "^3.13"
 pandas = "^2.2.3"
