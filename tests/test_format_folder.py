@@ -2,12 +2,13 @@ import pytest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 
-from src.utils.format_folder  import format_texts_in_folder 
+from src.utils.format_folder import format_texts_in_folder
 
 
 def sample_txt_content(number):
     """Return a simple string for testing text content."""
     return f"{number}. Chapter {number}\n Hello world of content for chapter {number}.\n\nAnother line for chapter {number}.\n"
+
 
 @pytest.fixture
 def create_test_files(tmp_path):
@@ -23,14 +24,14 @@ def create_test_files(tmp_path):
 
     file1.write_text(sample_txt_content(1))
     file1_path = Path(file1)
-    with file1_path.open(mode='a', encoding='utf-8') as file:
+    with file1_path.open(mode="a", encoding="utf-8") as file:
         file.write(sample_txt_content(2))
 
     file2 = input_folder / "test2.txt"
 
     file2.write_text(sample_txt_content(3))
     file2_path = Path(file2)
-    with file2_path.open(mode='a', encoding='utf-8') as file:
+    with file2_path.open(mode="a", encoding="utf-8") as file:
         file.write(sample_txt_content(4))
 
     output_folder = tmp_path / "output"
@@ -54,12 +55,14 @@ def test_format_folder_in_submission_order(
         output_folder=output_folder,
         max_length=100,
         use_chatgpt=False,
-        max_workers=2
+        max_workers=2,
     )
-  
+
     output_files = list(Path(output_folder).glob("*.txt"))
     output_files = [str(file) for file in output_files]
     print("Output files:", output_files)
     assert len(output_files) == 4, "Expected 4 output files."
 
-    print("Test passed: format_folder produces results in the submission order and saves them correctly!")
+    print(
+        "Test passed: format_folder produces results in the submission order and saves them correctly!"
+    )
