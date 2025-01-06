@@ -11,14 +11,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-client = OpenAI(api_key=API_KEY)
+client = None
 
-formatted_directory = (
-    "/home/dzianis/projects/study/nlp_tools/format-book/_temp/formatted_chapters_mini/"
-)
 
-if not os.path.exists(formatted_directory):
-    os.makedirs(formatted_directory)
+def init_openai_client():
+    if client is None:
+        client = OpenAI(api_key=API_KEY)
 
 
 def get_stat_for_text(text):
@@ -115,6 +113,8 @@ def format_text(text_content, use_chatgpt=True):
         f"Return a JSON object with a single field named 'result'. The value of 'result' should contain the formatted text. "
         f"\n\nText: {text_content}"
     )
+
+    init_openai_client()
 
     completion = client.chat.completions.create(
         model="gpt-4o",
