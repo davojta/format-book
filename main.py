@@ -4,8 +4,8 @@ from pathlib import Path
 import pandas as pd
 import time
 
-from src.helpers import split_text_into_sections, generate_filename, split_content_by_length, format_text, save_formatted_section, calculate_text_stats
-from src.format_folder import format_folder
+from src.utils.helpers import calculate_text_stats
+from src.utils.format_folder import format_texts_in_folder
 
 
 @click.group()
@@ -26,7 +26,7 @@ def format_folder(input_folder, output_folder, max_length, use_chatgpt, max_work
     """
     Format all text files in INPUT_FOLDER and save formatted versions to OUTPUT_FOLDER.
     """
-    format_folder(input_folder, output_folder, max_length, use_chatgpt, max_workers)
+    format_texts_in_folder(input_folder, output_folder, max_length, use_chatgpt, max_workers)
 
 @cli.command()
 @click.argument('input_folder', type=click.Path(exists=True, file_okay=False))

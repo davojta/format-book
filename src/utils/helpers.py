@@ -6,7 +6,11 @@ import os
 import pandas as pd
 import re
 
-API_KEY = "sk-proj-"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 client = OpenAI(api_key=API_KEY)
 
 formatted_directory = "/home/dzianis/projects/study/nlp_tools/format-book/_temp/formatted_chapters_mini/"
@@ -137,6 +141,7 @@ def generate_filename(title):
 
 
 def save_formatted_section(file_path, chapter_number, title, content):
+    print(f"Saving formatted section to {file_path}...")
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(f"{chapter_number}. {title}\n\n{content}")
 

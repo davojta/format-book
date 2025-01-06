@@ -28,14 +28,15 @@ poetry install
 
 ## next
 
-- [ ] fix bug with incorrect call of chapgpt futures queue
+- [ ] 
 
-- [ ] add tests for main functions
 - [ ] compare by sentence (to see the difference between chapters?)
-
 - [ ] combile chapters by words (2000) into 1 file
 
 ## What is ready
+- [x] add tests for format_book functions
+
+- [x] fix bug with incorrect call of chapgpt futures queue
 
 - [x] make a number + chapter + filename in snake case
 - [x] take a text 2000 symbols - process with open ai

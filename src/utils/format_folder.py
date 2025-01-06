@@ -1,12 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.helpers import split_text_into_sections, generate_filename, split_content_by_length, format_text, save_formatted_section, calculate_text_stats
+from src.utils.helpers import split_text_into_sections, generate_filename, split_content_by_length, format_text, save_formatted_section, calculate_text_stats
 from pathlib import Path
 
 def format_chapter_number(number):
     return f"{number:02}"
 
 
-def format_folder(input_folder, output_folder, max_length, use_chatgpt, max_workers):
+def format_texts_in_folder(input_folder, output_folder, max_length, use_chatgpt, max_workers):
     """
     Format all text files in INPUT_FOLDER and save formatted versions to OUTPUT_FOLDER.
     """
@@ -22,13 +22,16 @@ def format_folder(input_folder, output_folder, max_length, use_chatgpt, max_work
             for section in sections:
                 split_parts = split_content_by_length(section['content'], max_length)
                 for part in split_parts:
+                    print(f"Submitting tasks for formatting {file_path.name}/{section['title']}...")
                     futures.append(
                         executor.submit(format_text, part['content'], use_chatgpt=use_chatgpt)
                     )
 
         formatted_contents = []
-        for future in as_completed(futures):
-            formatted_contents.append(future.result())
+
+        results_in_submit_order = [f.result() for f in futures]
+        for result in results_in_submit_order:
+            formatted_contents.append(result)
 
         index = 0
         for file_path in input_path.glob('*.txt'):
