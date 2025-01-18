@@ -1,10 +1,12 @@
 import re
 import json
-from openai import OpenAI
+from openai import OpenAI, RateLimitError
 
 import os
 import pandas as pd
 import re
+
+import time
 
 from dotenv import load_dotenv
 
@@ -15,6 +17,7 @@ client = None
 
 
 def init_openai_client():
+    global client
     if client is None:
         client = OpenAI(api_key=API_KEY)
 
@@ -104,39 +107,86 @@ def split_content_by_length(content, max_length):
     return parts
 
 
+class RateLimitExceededError(Exception):
+    """Custom exception for rate limit exceeded errors."""
+
+    pass
+
+
+def call_chatgpt_api(prompt, max_retries=5, initial_wait=1):
+    retries = 0
+    wait_time = initial_wait
+    formatted_text = None
+
+    while retries < max_retries:
+        try:
+            # Call the OpenAI API
+            completion = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant which response always in json format.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"},
+            )
+
+            # Parse the JSON response and extract the value of "result"
+            try:
+                response_json = json.loads(completion.choices[0].message.content)
+                formatted_text = response_json.get(
+                    "result", "Could not find 'result' in response."
+                )
+            except json.JSONDecodeError:
+                raise ValueError("Invalid JSON response received from the API.")
+
+            return formatted_text
+
+        except RateLimitError:
+            retries += 1
+            if retries >= max_retries:
+                raise RateLimitExceededError(
+                    "Rate limit exceeded. Please try again later."
+                )
+            print(f"Rate limit hit. Retrying in {wait_time} seconds...")
+            time.sleep(wait_time)
+            wait_time *= 2  # Exponential backoff
+
+    raise RateLimitExceededError("Rate limit exceeded. Please try again later.")
+
+
 def format_text(text_content, use_chatgpt=True):
     if not use_chatgpt:
         return text_content
 
     prompt = (
-        f"Format the following piece of text separating paragraphs with new line, removing excessing new lines without changing the words of the text"
+        f"""
+        I have raw text retrieved from an OCR process, and I need help formatting it into a unified, clean, and visually appealing structure. Specifically, I want:
+
+    Direct speech to be formatted consistently, using a unified style across all instances.
+        Replace any type of quotation marks (e.g., " ", ' ', “” or ‘’) with a dash (-) to indicate direct speech.
+        Ensure that the direct speech is separated from the surrounding text by appropriate spacing.
+
+    The entire text to be cleaned and organized, ensuring:
+        Removal of unnecessary spaces, inconsistent line breaks, and other OCR artifacts.
+        Consistent capitalization and punctuation throughout.
+        Proper paragraph structure, with one thought or idea per paragraph.
+
+Please process the following text according to these requirements:
+
+{text_content}
+
+If the text is unclear or ambiguous, make reasonable formatting decisions while preserving the meaning and readability of the content.
+
+"""
         f"Return a JSON object with a single field named 'result'. The value of 'result' should contain the formatted text. "
-        f"\n\nText: {text_content}"
     )
 
     init_openai_client()
 
-    completion = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant which response always in json format.",
-            },
-            {"role": "user", "content": prompt},
-        ],
-        response_format={"type": "json_object"},
-    )
-
-    # Parse the JSON response and extract the value of "result"
-    try:
-        # print(f"\n\nText: {completion.choices[0].message.content}")
-        response_json = json.loads(completion.choices[0].message.content)
-        formatted_text = response_json.get(
-            "result", "Could not find 'result' in response."
-        )
-    except json.JSONDecodeError:
-        formatted_text = "Invalid JSON response."
+    formatted_text = call_chatgpt_api(prompt)
 
     return formatted_text
 

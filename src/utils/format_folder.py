@@ -31,9 +31,10 @@ def format_texts_in_folder(
             sections = split_text_into_sections(file_path)
             for section in sections:
                 split_parts = split_content_by_length(section["content"], max_length)
-                for part in split_parts:
+
+                for index, part in enumerate(split_parts):
                     print(
-                        f"Submitting tasks for formatting {file_path.name}/{section['title']}..."
+                        f"Submitting tasks for formatting {file_path.name}/p_{index}/{section['title']}..."
                     )
                     futures.append(
                         executor.submit(
