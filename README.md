@@ -26,12 +26,23 @@ poetry install
 
 ## next
 
-- [ ] add github actions
 
+- [ ] add logger
 - [ ] compare by sentence (to see the difference between chapters?)
-- [ ] combile chapters by words (2000) into 1 file
+- [ ] add cli to extract text from epub
+- [ ] add cli to extract text from pdf
+- [ ] run prompt to get simple finnish text from normal text
+- [ ] run prompt to get anki csv from the text file
+
 
 ## What is ready
+
+## 2025-01-18
+
+- [x] add github actions
+- [x] combile chapters by words (2000) into 1 file
+
+## initial
 - [x] add dotenv
 - [x] add tests for format_book functions
 
@@ -39,7 +50,7 @@ poetry install
 
 - [x] make a number + chapter + filename in snake case
 - [x] take a text 2000 symbols - process with open ai
-- [x]return to folder formatted/ with the same filename
+- [x] return to folder formatted/ with the same filename
 
 - [x] refactor function to one place
 - [x] process all txt files in the folder
