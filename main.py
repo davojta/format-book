@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import time
 
-from src.utils.helpers import calculate_text_stats
+from src.utils.helpers import calculate_text_stats, extract_text_from_epub_file
 from src.utils.format_folder import format_texts_in_folder
 
 
@@ -63,6 +63,21 @@ def generate_stats(input_folder, output_folder):
     merged_df["diff_sents"] = merged_df["sents_input"] - merged_df["sents_output"]
 
     print(merged_df.head()[["title", "diff_words", "diff_sents"]])
+
+
+@cli.command()
+@click.argument("input_file", type=click.Path(exists=True, file_okay=True))
+@click.argument("output_folder", type=click.Path())
+def extract_text_from_epub(input_file, output_folder):
+    """
+    Extract text from epub in INPUT_FILE and output text to OUTPUT_FILE.
+    """
+    input_path = Path(input_file)
+    output_path = Path(output_folder)
+
+    extract_text_from_epub_file(input_path, output_path)
+
+    print("Extracting text from EPUB files...")
 
 
 @cli.command()

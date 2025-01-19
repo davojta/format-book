@@ -12,6 +12,8 @@ openai = "^1.54.3"
 click = "^8.1.7"
 python-dotenv = "^1.0.1"
 pre-commit = "^4.0.1"
+ebooklib = "^0.18"
+bs4 = "^0.0.2"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.1.1"
