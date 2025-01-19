@@ -157,22 +157,43 @@ def call_chatgpt_api(prompt, max_retries=5, initial_wait=1):
     raise RateLimitExceededError("Rate limit exceeded. Please try again later.")
 
 
+from ebooklib import epub
+from bs4 import BeautifulSoup
+
+
+def extract_text_from_epub_file(epub_path, output_path):
+    try:
+        # Load the EPUB book
+        book = epub.read_epub(epub_path)
+
+        # Collect all text from the EPUB file
+        text_content = []
+        for item in book.get_items():
+            if item.get_type() == epub.EpubItem.DOCUMENT:
+                # Parse the content using BeautifulSoup
+                soup = BeautifulSoup(item.get_content(), "html.parser")
+                text_content.append(soup.get_text())
+
+        # Join all text and write to the output file
+        with open(output_path, "w", encoding="utf-8") as output_file:
+            output_file.write("\n".join(text_content))
+
+        print(f"Text extracted successfully to {output_path}")
+    except AttributeError as e:
+        print(f"Error: The EPUB structure is invalid or unsupported. Details: {e}")
+    except Exception as e:
+        print(f"Error processing EPUB file: {e}")
+
+
 def format_text(text_content, use_chatgpt=True):
     if not use_chatgpt:
         return text_content
 
     prompt = (
         f"""
-        I have raw text retrieved from an OCR process, and I need help formatting it into a unified, clean, and visually appealing structure. Specifically, I want:
-
-    Direct speech to be formatted consistently, using a unified style across all instances.
-        Replace any type of quotation marks (e.g., " ", ' ', “” or ‘’) with a dash (-) to indicate direct speech.
-        Ensure that the direct speech is separated from the surrounding text by appropriate spacing.
-
-    The entire text to be cleaned and organized, ensuring:
-        Removal of unnecessary spaces, inconsistent line breaks, and other OCR artifacts.
-        Consistent capitalization and punctuation throughout.
-        Proper paragraph structure, with one thought or idea per paragraph.
+        I have a text from original book in normal finnish.
+        The size of the text should be reduced by simplifying the content and making it more accessible to language learners on level A2+ in simple finnish.
+        The sentences should be shorter and simpler, and the vocabulary should be easier to understand.
 
 Please process the following text according to these requirements:
 

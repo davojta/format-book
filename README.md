@@ -33,6 +33,12 @@ poetry install
 - [ ] add cli to extract text from pdf
 - [ ] run prompt to get simple finnish text from normal text
 - [ ] run prompt to get anki csv from the text file
+- [ ] add algorithmic way to remove garbage in the text - trailing whitespaces and repeated new lines
+- [ ] process pikku prinssi book
+- [ ] process language folders book (format chapters)
+- [ ] extract from docx (export from the google)
+- [ ] process tonttu (folders inside folders, docx, ignore images)
+- [ ] process Toinen vuosi Malory Towersissa (epub)
 
 
 ## What is ready
